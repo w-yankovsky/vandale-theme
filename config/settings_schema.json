@@ -1,7 +1,18 @@
 [
   {
+    "name":"Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "body font",
+        "label": "body font",
+        "default": "helvetica_n4"
+      }
+    ]
+  },
+  {
     "name": "theme_info",
-    "theme_name": "Dawn",
+    "theme_name": "Dawn G",
     "theme_version": "11.0.0",
     "theme_author": "Shopify",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",

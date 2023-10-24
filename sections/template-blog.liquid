@@ -1,0 +1,89 @@
+<style>
+  .wrap-blog {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .wrap-blog .blog_items {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+  }
+  .wrap-blog .blog_item {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 15px;
+    width: 33.33333%;
+  }
+  .wrap-blog .inner-wrap {
+    box-shadow: 0 0 11px 1px rgb(51 51 51 / 11%);
+    padding: 10px;
+  }
+  .wrap-blog .blog-img img {
+    width: 100%;
+    object-fit: cover;
+    height: 200px;
+  }
+</style>
+
+<div class="wrap-blog">
+  <div class="wrap-title">
+    <h1>{{ blog.title }}</h1>
+  </div>
+
+  <div class="blog_items">
+    {% paginate blog.articles by section.settings.number_of_blog_posts %}
+      {% for article in blog.articles %}
+        <div class="blog_item">
+          <div class="inner-wrap">
+            <div class="blog-img">
+              {% if article.image %}
+                <img src="{{ article.image | img_url: 'medium' }}" alt="{{ article.image.alt }}">
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'w-20' }}
+              {% endif %}
+            </div>
+            <h1>{{ article.title }}</h1>
+
+            {% if article.excerpt.size > 0 %}
+              <p>{{ article.excerpt | strip_html | truncatewords: 15 }}</p>
+            {% else %}
+              <p>{{ article.content | strip_html | truncatewords: 15 }}</p>
+            {% endif %}
+
+            <a href="{{ article.url }}" class="font-medium text-blue-600 hover: text-blue-800 my-4 block">
+              {{ section.settings.blog_read_more }}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div style="text-align:center;">
+        {% render 'pagination', pagination: paginate %}
+      </div>
+    {% endpaginate %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "text",
+      "id": "blog_read_more",
+      "label": "Read more label",
+      "default": "Read more"
+    },
+    {
+      "type": "range",
+      "id": "number_of_blog_posts",
+      "step": 1,
+      "min": 1,
+      "max": 6,
+      "label": "Blog posts per page",
+      "default": 3
+    }
+  ]
+}
+{% endschema %}

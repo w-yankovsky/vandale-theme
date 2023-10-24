@@ -1,0 +1,171 @@
+<style>
+  .cart-wrap {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .cart-header {
+    width: 100%;
+  }
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #333;
+    text-align: left;
+    margin-bottom: 50px;
+  }
+  .cart-table thead {
+    border-bottom: 1px solid #333;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .cart-table thead th,
+  .cart-table tbody td {
+    padding: 10px;
+  }
+  .cart-table input[type='number'] {
+    width: 100px;
+    padding: 10px;
+  }
+  .cart-table .total-price {
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .cart-table a {
+    font-weight: 600;
+    color: #333;
+  }
+  .cart-table a.remove-btn {
+    color: red;
+  }
+  .cart-table .product-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+  }
+  .cart-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  .cart-footer .cart_notes label {
+    display: block;
+  }
+  .cart-footer .cart_notes textarea {
+    width: 300px;
+    height: 80px;
+    border: 1px solid #dbdbdb;
+  }
+</style>
+{% if cart.item_count > 0 %}
+  <div class="cart-wrap">
+    <div class="cart-header">
+      <div class="flex">
+        <h1 class="cart-title">Your cart</h1>
+        <a
+          href="{{ routes.all_products_collectiom_url }}"
+          class="continue_shopping"
+          >Continue shopping</a
+        >
+      </div>
+    </div>
+
+    <div class="">
+      <form action="{{ routes.cart_url }}" method="POST" novalidate>
+        <table class="cart-table">
+          <thead>
+            <th class="" colspan="2">Product</th>
+            <th class="">Quantity</th>
+            <th class="">Total Price</th>
+          </thead>
+          <tbody>
+            {% for item in cart.items %}
+              <tr class="table-row">
+                <td class="">
+                  <a href="{{ item.url }}">
+                    {% if item.image %}
+                      <img
+                        src="{{ item | img_url: 'small' }}"
+                        alt="{{ item.title | escape }}"
+                        class="product-img"
+                      >
+                    {% else %}
+                      {{ 'product-1' | placeholder_svg_tag: 'product-img' }}
+                    {% endif %}
+                  </a>
+                </td>
+                <td class="py-4 px-2 flex flex-col justify-center">
+                  <a href="{{ item.url }}" class="my-1">{{ item.product.title | truncatewords: 5 }}</a>
+                  <span class="text-sm text-gray-500 my-1">{{ item.variant.title }}</span>
+                  <a
+                    href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                    class="remove-btn"
+                    >remove</a
+                  >
+                </td>
+                <td class="py-4 px-2">
+                  <input
+                    type="number"
+                    name="updates[]"
+                    id="updates_{{ forloop.index }}"
+                    value="{{ item.quantity }}"
+                    min="0"
+                    class="w-20 border p-2"
+                  >
+                </td>
+                <td class="total-price">
+                  {{ item.line_price | money }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="cart-footer">
+          <div class="w-full my-4">
+            <div class="cart_notes">
+              <label for=" my-1">Cart notes</label>
+              <textarea name="note" id="cart_note" class="w-full md:max-w-lg resize-none border h-20"></textarea>
+            </div>
+          </div>
+
+          <div class="w-full my-4 md:w-80">
+            <h3 class="text-xl">Subtotal: {{ cart.total_price | money }}</h3>
+
+            <div class="my-2">
+              <button
+                type="submit"
+                name="update"
+                class="w-full p-3 border border-gray-600 text-gray-600 font-medium hover:bg-gray-600 hover:text-white"
+              >
+                Update
+              </button>
+            </div>
+
+            <div class="my-2">
+              <button
+                type="submit"
+                name="checkout"
+                class="w-full p-3 border border-gray-600 font-medium bg-gray-600 text-white"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% else %}
+  <div class="max-w-6xl h-60 my-4 mx-auto flex flex-col items-center justify-center">
+    <div class="text-center">
+      <h1 class="text-3xl my-4">Your cart is empty</h1>
+
+      <div class="my-4 py-4">
+        <a
+          href="{{ routes.all_products_collection_url }}"
+          class="border border-gray-600 text-white bg-gray-600 px-8 py-3"
+          >Continue shopping</a
+        >
+      </div>
+    </div>
+  </div>
+{% endif %}
